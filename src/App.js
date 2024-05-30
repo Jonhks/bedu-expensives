@@ -1,36 +1,22 @@
+import { useState } from "react";
 import Expenses from "./components/Expenses/Expenses";
+import NewExpense from "./components/NewExpense/NewExpense";
+
 function App() {
-  const expenses = [
-    {
-      id: Math.random(),
-      date: new Date(2022, 4, 23),
-      title: "Libros",
-      amount: 250,
-    },
-    {
-      id: Math.random(),
-      date: new Date(2022, 2, 20),
-      title: "Café",
-      amount: 50,
-    },
-    {
-      id: Math.random(),
-      date: new Date(2022, 3, 18),
-      title: "Comida",
-      amount: 600,
-    },
-    {
-      id: Math.random(),
-      date: new Date(2015, 3, 18),
-      title: "Bicis",
-      amount: 1000,
-    },
-  ];
+  const [expenses, setExpenses] = useState([]);
+
+  const addExpenseHandler = (expense) => {
+    setExpenses((prevState) => [...prevState, expense]);
+  };
 
   return (
     <div>
-      <h1>Hello World</h1>
-      <Expenses items={expenses} />
+      <NewExpense addExpenseHandler={addExpenseHandler} />
+      {expenses.length <= 0 ? (
+        <div>No hay nada</div>
+      ) : (
+        <Expenses items={expenses} />
+      )}
     </div>
   );
 }

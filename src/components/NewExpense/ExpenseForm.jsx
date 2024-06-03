@@ -3,9 +3,6 @@ import "./ExpenseForm.css";
 
 const ExpenseForm = (props) => {
   // estados
-  // const [title, setTitle] = useState("");
-  // const [amount, setAmount] = useState("");
-  // const [date, setDate] = useState("");
 
   const [data, setData] = useState({
     title: "",
@@ -15,10 +12,6 @@ const ExpenseForm = (props) => {
 
   // handlers
   const titleChangeHandler = (event) => {
-    // setData({
-    //   ...data,
-    //   title: event.target.value,
-    // });
     setData((prevState) => ({
       ...prevState,
       title: event.target.value,
@@ -26,10 +19,6 @@ const ExpenseForm = (props) => {
   };
 
   const amountChangeHandler = (event) => {
-    // setData({
-    //   ...data,
-    //   amount: event.target.value,
-    // });
     setData((prevState) => ({
       ...prevState,
       amount: event.target.value,
@@ -37,10 +26,6 @@ const ExpenseForm = (props) => {
   };
 
   const dateChangeHandler = (event) => {
-    // setData({
-    //   ...data,
-    //   date: event.target.value,
-    // });
     setData((prevState) => ({
       ...prevState,
       date: event.target.value,

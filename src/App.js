@@ -12,11 +12,7 @@ function App() {
   return (
     <div>
       <NewExpense addExpenseHandler={addExpenseHandler} />
-      {expenses.length <= 0 ? (
-        <div>No hay nada</div>
-      ) : (
-        <Expenses items={expenses} />
-      )}
+      <Expenses items={expenses} />
     </div>
   );
 }

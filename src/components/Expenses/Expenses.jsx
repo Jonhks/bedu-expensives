@@ -5,36 +5,37 @@ import Card from "../UI/Card";
 import "./Expenses.css";
 
 const Expenses = (props) => {
-  const [year, setYear] = useState("2022");
+  const [year, setYear] = useState("2024");
 
   const filterChangeHandler = (selectedYear) => {
     setYear(selectedYear);
   };
 
   const filteredExpenses = props.items.filter((expense) => {
-    console.log(expense.date.getFullYear().toString());
-    return expense.date.getFullYear().toString() === year;
+    return new Date(expense.date).getFullYear().toString() === year;
   });
 
   return (
-    <Card className="expenses">
-      <ExpensesFilter
-        selected={year}
-        onChangeFilter={filterChangeHandler}
-      />
-      {filteredExpenses.length === 0 ? (
-        <h3>No se encontraron gastos</h3>
-      ) : (
-        filteredExpenses.map((expense) => (
-          <ExpenseItem
-            key={expense.id}
-            date={expense.date}
-            title={expense.title}
-            amount={expense.amount}
-          />
-        ))
-      )}
-    </Card>
+    <div>
+      <Card className="expenses">
+        <ExpensesFilter
+          selected={year}
+          onChangeFilter={filterChangeHandler}
+        />
+        {filteredExpenses.length === 0 ? (
+          <h3>No se encontraron gastos</h3>
+        ) : (
+          filteredExpenses.map((expense) => (
+            <ExpenseItem
+              key={expense.id}
+              date={expense.date}
+              title={expense.title}
+              amount={expense.amount}
+            />
+          ))
+        )}
+      </Card>
+    </div>
   );
 };
 

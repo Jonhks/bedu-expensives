@@ -1,9 +1,59 @@
 import { useState } from "react";
-import "./ExpenseForm.css";
+import styled from "styled-components";
+
+const FormControls = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+`;
+
+const FormControl = styled.div`
+  & label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: ${(props) => (props.invalid ? "#ad0000" : "#000")};
+  }
+  & input {
+    font: inherit;
+    padding: 0.5rem;
+    border: 1px solid ${(props) => (props.invalid ? "#ad0000" : "#ccc")};
+    width: 20rem;
+    max-width: 100%;
+  }
+`;
+
+const FormActions = styled.div`
+  text-align: right;
+`;
+
+const Button = styled.button`
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border: 1px solid #464646;
+  background-color: #464646;
+  color: #e5e5e5;
+  border-radius: 12px;
+  margin-right: 1rem;
+  width: 100%;
+
+  &:hover,
+  &:active {
+    cursor: pointer;
+    background-color: #afafaf;
+    border-color: #afafaf;
+    color: black;
+  }
+  @media (min-width: 768px) {
+    width: auto;
+  }
+`;
 
 const ExpenseForm = (props) => {
   // estados
-
+  const [isValid, setIsValid] = useState(true);
   const [data, setData] = useState({
     title: "",
     amount: "",
@@ -35,6 +85,11 @@ const ExpenseForm = (props) => {
   const submitHandler = (event) => {
     event.preventDefault();
 
+    if (data.title.trim().length === 0) {
+      setIsValid(false);
+      return;
+    }
+
     const expense = {
       title: data.title,
       amount: data.amount,
@@ -50,16 +105,16 @@ const ExpenseForm = (props) => {
 
   return (
     <form onSubmit={submitHandler}>
-      <div className="new-expense-controls">
-        <div className="new-expense-control">
+      <FormControls>
+        <FormControl invalid={!isValid}>
           <label>Descripción</label>
           <input
             type="text"
             value={data.title}
             onChange={titleChangeHandler}
           />
-        </div>
-        <div className="new-expense-control">
+        </FormControl>
+        <FormControl invalid={!isValid}>
           <label>Monto</label>
           <input
             type="number"
@@ -68,8 +123,8 @@ const ExpenseForm = (props) => {
             value={data.amount}
             onChange={amountChangeHandler}
           />
-        </div>
-        <div className="new-expense-control">
+        </FormControl>
+        <FormControl invalid={!isValid}>
           <label>Fecha</label>
           <input
             type="date"
@@ -78,11 +133,11 @@ const ExpenseForm = (props) => {
             value={data.date}
             onChange={dateChangeHandler}
           />
-        </div>
-      </div>
-      <div className="new-expense-actions">
-        <button type="submit">Agregar</button>
-      </div>
+        </FormControl>
+      </FormControls>
+      <FormActions>
+        <Button type="submit">Agregar</Button>
+      </FormActions>
     </form>
   );
 };

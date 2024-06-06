@@ -16,26 +16,24 @@ const Expenses = (props) => {
   });
 
   return (
-    <div>
-      <Card className="expenses">
-        <ExpensesFilter
-          selected={year}
-          onChangeFilter={filterChangeHandler}
-        />
-        {filteredExpenses.length === 0 ? (
-          <h3>No se encontraron gastos</h3>
-        ) : (
-          filteredExpenses.map((expense) => (
-            <ExpenseItem
-              key={expense.id}
-              date={expense.date}
-              title={expense.title}
-              amount={expense.amount}
-            />
-          ))
-        )}
-      </Card>
-    </div>
+    <Card className="expenses">
+      <ExpensesFilter
+        selected={year}
+        onChangeFilter={filterChangeHandler}
+      />
+      {filteredExpenses.length === 0 ? (
+        <h3>No se encontraron gastos</h3>
+      ) : (
+        filteredExpenses.map((expense) => (
+          <ExpenseItem
+            key={expense.id}
+            date={expense.date}
+            title={expense.title}
+            amount={expense.amount}
+          />
+        ))
+      )}
+    </Card>
   );
 };
 

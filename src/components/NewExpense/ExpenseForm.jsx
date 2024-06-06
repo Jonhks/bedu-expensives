@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
 import styles from "./ExpenseForm.module.css";
+import Button from "../UI/Button";
+import Modal from "../UI/Modal";
 
 const FormControls = styled.div`
   display: flex;
@@ -14,29 +16,8 @@ const FormActions = styled.div`
   text-align: right;
 `;
 
-const Button = styled.button`
-  font: inherit;
-  padding: 0.5rem 1rem;
-  border: 1px solid #464646;
-  background-color: #464646;
-  color: #e5e5e5;
-  border-radius: 12px;
-  margin-right: 1rem;
-  width: 100%;
-
-  &:hover,
-  &:active {
-    cursor: pointer;
-    background-color: #afafaf;
-    border-color: #afafaf;
-    color: black;
-  }
-  @media (min-width: 768px) {
-    width: auto;
-  }
-`;
-
 const ExpenseForm = (props) => {
+  const titleRef = useRef(null);
   // estados
   const [data, setData] = useState({
     title: "",
@@ -46,8 +27,13 @@ const ExpenseForm = (props) => {
   const [isTitleValid, setIsTitleValid] = useState(true);
   const [isAmountValid, setIsAmountValid] = useState(true);
   const [isDateValid, setIsDateValid] = useState(true);
-
+  const [error, setError] = useState(null);
   // handlers
+
+  const errorHandler = () => {
+    setError(null);
+  };
+
   const titleChangeHandler = (event) => {
     if (event.target.value.length > 0) {
       setData((prevState) => ({
@@ -64,7 +50,7 @@ const ExpenseForm = (props) => {
         ...prevState,
         amount: event.target.value,
       }));
-      setIsAmountValid(true);
+      setIsDateValid(true);
     }
   };
 
@@ -74,12 +60,21 @@ const ExpenseForm = (props) => {
         ...prevState,
         date: event.target.value,
       }));
-      setIsDateValid(true);
+      if (new Date(event.target.value) > new Date()) {
+        setIsDateValid(false);
+        setError({
+          title: "Fecha inválida",
+          message: `La fecha no debe ser mayor a ${new Date().toLocaleDateString()}`,
+        });
+      } else {
+        setIsDateValid(true);
+      }
     }
   };
 
   const submitHandler = (event) => {
     event.preventDefault();
+    setIsDateValid(true);
 
     validateFields();
     if (!(isTitleValid && isAmountValid && isDateValid)) return;
@@ -100,6 +95,7 @@ const ExpenseForm = (props) => {
   const validateFields = () => {
     if (data.title.trim().length === 0) {
       setIsTitleValid(false);
+      titleRef.current.focus();
     }
 
     if (data.amount.trim().length === 0) {
@@ -112,53 +108,66 @@ const ExpenseForm = (props) => {
   };
 
   return (
-    <form onSubmit={submitHandler}>
-      <FormControls>
-        <div
-          className={`${styles["new-expense-control"]} ${
-            !isTitleValid && styles.invalid
-          }`}
-        >
-          <label>Descripción</label>
-          <input
-            type="text"
-            value={data.title}
-            onChange={titleChangeHandler}
+    <>
+      {error && (
+        <Modal
+          title={error.title}
+          message={error.message}
+          onConfirm={errorHandler}
+        />
+      )}
+      <form onSubmit={submitHandler}>
+        <FormControls>
+          <div
+            className={`${styles["new-expense-control"]} ${
+              !isTitleValid && styles.invalid
+            }`}
+          >
+            <label>Descripción</label>
+            <input
+              type="text"
+              value={data.title}
+              onChange={titleChangeHandler}
+              ref={titleRef}
+            />
+          </div>
+          <div
+            className={`${styles["new-expense-control"]} ${
+              !isAmountValid && styles.invalid
+            }`}
+          >
+            <label>Monto</label>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              value={data.amount}
+              onChange={amountChangeHandler}
+            />
+          </div>
+          <div
+            className={`${styles["new-expense-control"]} ${
+              !isDateValid && styles.invalid
+            }`}
+          >
+            <label>Fecha</label>
+            <input
+              type="date"
+              min="2019-01-01"
+              max="2026-12-31"
+              value={data.date}
+              onChange={dateChangeHandler}
+            />
+          </div>
+        </FormControls>
+        <FormActions>
+          <Button
+            type={"submit"}
+            children={"Agregar"}
           />
-        </div>
-        <div
-          className={`${styles["new-expense-control"]} ${
-            !isAmountValid && styles.invalid
-          }`}
-        >
-          <label>Monto</label>
-          <input
-            type="number"
-            min="1"
-            step="1"
-            value={data.amount}
-            onChange={amountChangeHandler}
-          />
-        </div>
-        <div
-          className={`${styles["new-expense-control"]} ${
-            !isDateValid && styles.invalid
-          }`}
-        >
-          <label>Fecha</label>
-          <input
-            type="date"
-            min="2019-01-01"
-            max="2026-12-31"
-            value={data.date}
-            onChange={dateChangeHandler}
-          />
-        </div>
-      </FormControls>
-      <FormActions>
-        <Button type="submit">Agregar</Button>
-      </FormActions>
-    </form>
+        </FormActions>
+      </form>
+    </>
   );
 };
 

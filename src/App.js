@@ -21,10 +21,10 @@ function App() {
   };
 
   return (
-    <div>
+    <>
       <NewExpense addExpenseHandler={addExpenseHandler} />
       <Expenses items={expenses} />
-    </div>
+    </>
   );
 }
 

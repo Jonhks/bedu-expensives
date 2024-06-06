@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import styles from "./ExpenseForm.module.css";
 
 const FormControls = styled.div`
   display: flex;
@@ -7,22 +8,6 @@ const FormControls = styled.div`
   gap: 1rem;
   margin-bottom: 1rem;
   text-align: left;
-`;
-
-const FormControl = styled.div`
-  & label {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    display: block;
-    color: ${(props) => (props.invalid ? "#ad0000" : "#000")};
-  }
-  & input {
-    font: inherit;
-    padding: 0.5rem;
-    border: 1px solid ${(props) => (props.invalid ? "#ad0000" : "#ccc")};
-    width: 20rem;
-    max-width: 100%;
-  }
 `;
 
 const FormActions = styled.div`
@@ -53,42 +38,51 @@ const Button = styled.button`
 
 const ExpenseForm = (props) => {
   // estados
-  const [isValid, setIsValid] = useState(true);
   const [data, setData] = useState({
     title: "",
     amount: "",
     date: "",
   });
+  const [isTitleValid, setIsTitleValid] = useState(true);
+  const [isAmountValid, setIsAmountValid] = useState(true);
+  const [isDateValid, setIsDateValid] = useState(true);
 
   // handlers
   const titleChangeHandler = (event) => {
-    setData((prevState) => ({
-      ...prevState,
-      title: event.target.value,
-    }));
+    if (event.target.value.length > 0) {
+      setData((prevState) => ({
+        ...prevState,
+        title: event.target.value,
+      }));
+      setIsTitleValid(true);
+    }
   };
 
   const amountChangeHandler = (event) => {
-    setData((prevState) => ({
-      ...prevState,
-      amount: event.target.value,
-    }));
+    if (event.target.value.length > 0) {
+      setData((prevState) => ({
+        ...prevState,
+        amount: event.target.value,
+      }));
+      setIsAmountValid(true);
+    }
   };
 
   const dateChangeHandler = (event) => {
-    setData((prevState) => ({
-      ...prevState,
-      date: event.target.value,
-    }));
+    if (event.target.value.length > 0) {
+      setData((prevState) => ({
+        ...prevState,
+        date: event.target.value,
+      }));
+      setIsDateValid(true);
+    }
   };
 
   const submitHandler = (event) => {
     event.preventDefault();
 
-    if (data.title.trim().length === 0) {
-      setIsValid(false);
-      return;
-    }
+    validateFields();
+    if (!(isTitleValid && isAmountValid && isDateValid)) return;
 
     const expense = {
       title: data.title,
@@ -103,18 +97,40 @@ const ExpenseForm = (props) => {
     });
   };
 
+  const validateFields = () => {
+    if (data.title.trim().length === 0) {
+      setIsTitleValid(false);
+    }
+
+    if (data.amount.trim().length === 0) {
+      setIsAmountValid(false);
+    }
+
+    if (data.date.trim().length === 0) {
+      setIsDateValid(false);
+    }
+  };
+
   return (
     <form onSubmit={submitHandler}>
       <FormControls>
-        <FormControl invalid={!isValid}>
+        <div
+          className={`${styles["new-expense-control"]} ${
+            !isTitleValid && styles.invalid
+          }`}
+        >
           <label>Descripción</label>
           <input
             type="text"
             value={data.title}
             onChange={titleChangeHandler}
           />
-        </FormControl>
-        <FormControl invalid={!isValid}>
+        </div>
+        <div
+          className={`${styles["new-expense-control"]} ${
+            !isAmountValid && styles.invalid
+          }`}
+        >
           <label>Monto</label>
           <input
             type="number"
@@ -123,8 +139,12 @@ const ExpenseForm = (props) => {
             value={data.amount}
             onChange={amountChangeHandler}
           />
-        </FormControl>
-        <FormControl invalid={!isValid}>
+        </div>
+        <div
+          className={`${styles["new-expense-control"]} ${
+            !isDateValid && styles.invalid
+          }`}
+        >
           <label>Fecha</label>
           <input
             type="date"
@@ -133,7 +153,7 @@ const ExpenseForm = (props) => {
             value={data.date}
             onChange={dateChangeHandler}
           />
-        </FormControl>
+        </div>
       </FormControls>
       <FormActions>
         <Button type="submit">Agregar</Button>

@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Expenses from "./components/Expenses/Expenses";
 import NewExpense from "./components/NewExpense/NewExpense";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./firebase/config";
 
 function App() {
   const [expenses, setExpenses] = useState(
@@ -8,6 +10,18 @@ function App() {
       ? JSON.parse(localStorage.getItem("dataLocal"))
       : []
   );
+
+  // Obtener
+  useEffect(() => {
+    const expensesRef = collection(db, "expenses");
+    getDocs(expensesRef).then((resp) =>
+      console.log(
+        resp.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        })
+      )
+    );
+  }, []);
 
   const addExpenseHandler = (expense) => {
     setExpenses((prevState) => [...prevState, expense]);
